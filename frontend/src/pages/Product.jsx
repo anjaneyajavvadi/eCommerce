@@ -6,7 +6,7 @@ import RelatedProducts from '../components/RelatedProducts';
 
 const Product = () => {
   const {productId}=useParams();
-  const {products,currency}=useContext(ShopContext);
+  const {products,currency,addToCart}=useContext(ShopContext);
   const [productData,setProductData]=useState(false);
   const [image,setImage]=useState("");
   const [size,setSize]=useState("");
@@ -63,18 +63,19 @@ const Product = () => {
               <div className='flex gap-2'>
                 {productData.sizes.map((item,index)=>{ return(
                     <button 
-                        onClick={() => setSize(item)} 
+                        onClick={() => setSize(size === item ? "" : item)} 
                         key={index} 
                         className={`cursor-pointer py-2 px-4 bg-gray-100 border-2 ${
                           item === size ? 'border-gray-500' : 'border-transparent'
                         }`}
                       >
-                {item}</button>
+                        {item}
+                      </button>
                 )
                 })}
               </div>
             </div>
-            <button className='bg-[#414141] text-white py-3 px-8 text-sm active:bg-gray-700'>Add to Cart</button>
+            <button onClick={()=>addToCart(productData._id,size)} className='bg-[#414141] text-white py-3 px-8 text-sm active:bg-gray-700 cursor-pointer'>Add to Cart</button>
             <hr className='mt-8 sm:w-4/5'></hr>
             <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
               <p>100% Original Product.</p>
@@ -95,7 +96,7 @@ const Product = () => {
                 <p>An ecommerce website is an online store that sells products or services over the internet. It allows customers to buy products or services directly from the website without having to visit a physical store. E-commerce websites typically use a combination of HTML, CSS, and JavaScript to create a user-friendly interface that allows customers to browse, add items to their cart, and checkout.</p>
               </div>
         </div>
-        <RelatedProducts/>
+        <RelatedProducts category={productData.category} subcategory={productData.subCategory}/>
     </div>
   ):<div className='opacity-0'></div>
 }
