@@ -1,9 +1,9 @@
+
 import {v2 as cloudinary} from 'cloudinary';
 
 const addProduct=async(req,res)=>{
     try{
         const {name,description,price,category,subCategory,sizes,bestSeller}=req.body;
-
         const img1=req.files.image1[0];
         const img2=req.files.image2[0];
         const img3=req.files.image3[0];
@@ -22,3 +22,16 @@ const addProduct=async(req,res)=>{
         res.json({success:false, message:"Internal Server Error"});
     }
 }
+
+const listProducts=async(req,res)=>{
+
+}
+
+const removeProduct=async(req,res)=>{
+
+}
+
+const singleProduct=async(req,res)=>{
+
+}
+export {addProduct,listProducts,removeProduct,singleProduct};

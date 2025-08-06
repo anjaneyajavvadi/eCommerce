@@ -14,5 +14,6 @@ const connectCloudinary=async()=>{
     } catch (error) {
         console.error("Cloudinary Connection Failed:", error);
     }
+
 }
 export default connectCloudinary;
