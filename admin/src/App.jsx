@@ -7,6 +7,7 @@ import List from './pages/List';
 import Orders from './pages/Orders';
 import Login from './components/Login';
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
+export const currency="₹";
 import { ToastContainer, toast } from 'react-toastify';
 
 const App = () => {
