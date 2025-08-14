@@ -28,7 +28,7 @@ const Add = ({token}) => {
             formData.append("category",category);
             formData.append("subCategory",subCategory);
             formData.append("sizes",JSON.stringify(sizes));
-            formData.append("bestSeller",bestSeller);
+            formData.append("bestSeller",String(bestSeller));
             image1 && formData.append("image1",image1);
             image2 && formData.append("image2",image2);
             image3 && formData.append("image3",image3);
@@ -39,14 +39,15 @@ const Add = ({token}) => {
                 setName("");
                 setDescription("");
                 setPrice("");
-                setCategory("");
-                setSubCategory("");
+                setCategory("Men");
+                setSubCategory("Topwear");
                 setSizes([]);
                 setBestSeller(false);
                 setImage1(false);
                 setImage2(false);
                 setImage3(false);
                 setImage4(false);
+
             }
             else{
                 toast.error(response.data.message);

@@ -16,7 +16,7 @@ const addProduct=async(req,res)=>{
                 return result.secure_url;
             })
         )
-        
+        console.log(bestSeller);
         const productData={
             name,
             description,
@@ -24,7 +24,7 @@ const addProduct=async(req,res)=>{
             subCategory,
             price:Number(price),
             sizes: sizes ? JSON.parse(sizes) : [],
-            bestSeller:bestSeller==='true'?true:false,
+            bestseller:JSON.parse(bestSeller),
             image:imagesUrl,
             date:Date.now()
         }
