@@ -67,4 +67,14 @@ const adminLogin=async(req,res)=>{
     }
 }
 
-export {loginUser,registerUser,adminLogin}
+const getProfile=async(req,res)=>{
+    try{
+        const user=await userModel.findById(req.body.userId).select("-password");
+        res.json({success:true,user});
+    }catch(err){
+        console.log(err);
+        res.json({success:false, message:"Internal Server Error"});
+    }
+}
+
+export {loginUser,registerUser,adminLogin,getProfile};

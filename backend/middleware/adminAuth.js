@@ -6,6 +6,7 @@ const adminAuth=async(req,res,next)=>{
         if(!token){
             return res.json({success:false, message:"Token not found"});
         }
+        console.log(token);
         const token_decoded=jwt.verify(token,process.env.JWT_SECRET);
         if(token_decoded.id!==process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD){
             return res.json({success:false, message:"You are not an admin"});
