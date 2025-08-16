@@ -38,50 +38,50 @@ const ShopContextProvider=(props)=>{
         return totalAmount;
     }
     const addToCart = async(itemId, size) => {
-    if(!size) {
-        toast.error('please select a size');
-        return;
-    }
+        if(!size) {
+            toast.error('please select a size');
+            return;
+        }
 
-    let cartData = structuredClone(cartItems);
-    
-    if(cartData[itemId]) {
-        if(cartData[itemId][size]) {
-            cartData[itemId][size] += 1;
+        let cartData = structuredClone(cartItems);
+        
+        if(cartData[itemId]) {
+            if(cartData[itemId][size]) {
+                cartData[itemId][size] += 1;
+            } else {
+                cartData[itemId][size] = 1;
+            }
         } else {
+            cartData[itemId] = {};
             cartData[itemId][size] = 1;
         }
-    } else {
-        cartData[itemId] = {};
-        cartData[itemId][size] = 1;
-    }
 
-    setCartItems(cartData);
+        setCartItems(cartData);
 
-    if(token) {
-        try {
-            console.log('Sending to backend:', { itemId, size }); // Add this
-            
-            const response = await axios.post(`${backendUrl}/api/cart/add`, {itemId, size},{
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            
-            console.log('Backend response:', response.data); // Add this
-            
-            if(!response.data.success) {
-                toast.error(response.data.message);
-            } else {
-                toast.success(response.data.message);
+        if(token) {
+            try {
+                console.log('Sending to backend:', { itemId, size }); // Add this
+                
+                const response = await axios.post(`${backendUrl}/api/cart/add`, {itemId, size},{
+                headers: { Authorization: `Bearer ${token}` }
+                });
+                
+                console.log('Backend response:', response.data); // Add this
+                
+                if(!response.data.success) {
+                    toast.error(response.data.message);
+                } else {
+                    toast.success(response.data.message);
+                }
+            } catch(err) {
+                console.log('Error details:', err);
+                console.log('Error response:', err.response?.data); 
+                toast.error(err.response?.data?.message || 'Something went wrong');
             }
-        } catch(err) {
-            console.log('Error details:', err);
-            console.log('Error response:', err.response?.data); 
-            toast.error(err.response?.data?.message || 'Something went wrong');
+        } else {
+            console.log('No token found - user not logged in'); 
         }
-    } else {
-        console.log('No token found - user not logged in'); 
-    }
-};
+    };
     
 
     const getCartCount=()=>{
