@@ -6,12 +6,12 @@ const orderRouter= express.Router();
 
 //user routes
 orderRouter.post("/placeorder",userAuth,placeOrder);
-orderRouter.post("/placeOrder-stripe",userAuth,placeOrderStripe);
-orderRouter.post("/placeOrder-razorpay",userAuth,placeOrderRazorpay);
-orderRouter.get("/userOrders",userAuth,userOrders);
+orderRouter.post("/placeorder-stripe",userAuth,placeOrderStripe);
+orderRouter.post("/placeorder-razorpay",userAuth,placeOrderRazorpay);
+orderRouter.get("/userorders",userAuth,userOrders);
 
 //Admin routes
-orderRouter.get("/allOrders",adminAUth,allOrders);
+orderRouter.get("/allorders",adminAUth,allOrders);
 orderRouter.put("/updateOrderStatus",adminAUth,updateOrderStatus);
 
 export default orderRouter;
