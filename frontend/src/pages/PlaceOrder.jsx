@@ -23,55 +23,62 @@ const PlaceOrder = () => {
   });
 
   const onSubmitHandler = async (e) => {
-    e.preventDefault();
-    try {
-      let items = [];
+  e.preventDefault();
+  try {
+    let items = [];
 
-      // build items array
-      for (const productId in cartItems) {
-        for (const size in cartItems[productId]) {
-          const itemInfo = structuredClone(products.find((p) => p._id === productId));
-          if (itemInfo) {
-            itemInfo.size = size;
-            itemInfo.quantity = cartItems[productId][size];
-            items.push(itemInfo);
-          }
+    // Build items array
+    for (const productId in cartItems) {
+      for (const size in cartItems[productId]) {
+        const product = products.find((p) => p._id === productId);
+        if (product) {
+          items.push({
+            productId: product._id,
+            name: product.name,
+            image: product.image[0],
+            price: product.price,
+            size,
+            quantity: cartItems[productId][size],
+          });
         }
       }
-
-      const orderData = {
-        orderData: {
-          items,
-          amount: getCartAmount() + delivery_fee,
-          address: formData,
-        },
-      };
-
-      switch (method) {
-        case 'cod':
-          const response=await axios.post(`${backendUrl}/api/order/placeorder`,orderData,{
-            headers:{Authorization:`Bearer ${token}`}
-          });
-          if(response.data.success){
-            toast.success(response.data.message);
-            setCartItems({});
-            navigate("/orders");
-          }
-          else{
-            toast.error(response.data.message);
-          }
-          break;
-        case 'card':
-          orderData.paymentMethod = 'card';
-          orderData.payment = true;
-          break;
-        default:
-          break;
-      }
-    } catch (err) {
-      console.error(err);
     }
-  };
+
+    const orderData = {
+      items,
+      amount: getCartAmount() + delivery_fee,
+      address: formData,
+    };
+
+    switch (method) {
+      case "cod":
+        const response = await axios.post(
+          `${backendUrl}/api/order/placeorder`,
+          orderData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.data.success) {
+          toast.success(response.data.message);
+          setCartItems({});
+          navigate("/orders");
+        } else {
+          toast.error(response.data.message);
+        }
+        break;
+
+      case "stripe":
+        break;
+
+      default:
+        break;
+    }
+  } catch (err) {
+    console.error(err);
+    toast.error("Something went wrong while placing order");
+  }
+};
+
 
 
   const handleInputChange = (e) => {
