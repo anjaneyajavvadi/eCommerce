@@ -1,5 +1,5 @@
 import express from "express";
-import { placeOrder,placeOrderRazorpay,placeOrderStripe,allOrders,userOrders,updateOrderStatus } from "../controllers/OrderController";
+import { placeOrder,placeOrderRazorpay,placeOrderStripe,allOrders,userOrders,updateOrderStatus } from "../controllers/orderController.js";
 import adminAUth from "../middleware/adminAuth.js";
 import userAuth from "../middleware/userAuth.js";
 const orderRouter= express.Router();

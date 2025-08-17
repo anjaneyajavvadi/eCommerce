@@ -3,31 +3,106 @@ import { assets } from '../assets/assets'
 import CartTotal from '../components/CartTotal'
 import Title from '../components/Title'
 import { ShopContext } from '../context/ShopContext'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const PlaceOrder = () => {
   const [method,setMethod]=useState('cod');
-  const {navigate}=useContext(ShopContext);
+  const {navigate,backendUrl,token,cartItems,setCartItems,getCartAmount,delivery_fee,products}=useContext(ShopContext);
+
+  const [formData,setFormData]=useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    street: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: '',
+    phone: '',
+  });
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      let items = [];
+
+      // build items array
+      for (const productId in cartItems) {
+        for (const size in cartItems[productId]) {
+          const itemInfo = structuredClone(products.find((p) => p._id === productId));
+          if (itemInfo) {
+            itemInfo.size = size;
+            itemInfo.quantity = cartItems[productId][size];
+            items.push(itemInfo);
+          }
+        }
+      }
+
+      const orderData = {
+        orderData: {
+          items,
+          amount: getCartAmount() + delivery_fee,
+          address: formData,
+        },
+      };
+
+      switch (method) {
+        case 'cod':
+          const response=await axios.post(`${backendUrl}/api/order/placeorder`,orderData,{
+            headers:{Authorization:`Bearer ${token}`}
+          });
+          if(response.data.success){
+            toast.success(response.data.message);
+            setCartItems({});
+            navigate("/orders");
+          }
+          else{
+            toast.error(response.data.message);
+          }
+          break;
+        case 'card':
+          orderData.paymentMethod = 'card';
+          orderData.payment = true;
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   return (
-    <div className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh]'>
+    <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh]'>
       <div className='flex flex-col gap-4 w-full sm:max-w-[480px]'>
         <div className='text-xl sm:text-2xl my-3'>
           <Title text1={'DELIVERY'} text2={'ADDRESS'}></Title>
         </div>
         <div className='flex gap-3'>
-          <input className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='First Name'></input>
-          <input className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='Last Name'></input>
+          <input onChange={handleInputChange} name='firstName' value={formData.firstName} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='First Name' required></input>
+          <input onChange={handleInputChange} name='lastName' value={formData.lastName} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='Last Name' required></input>
         </div>
-        <input className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='email' placeholder='Email Address'></input>
-        <input className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='Street'></input>
+        <input onChange={handleInputChange} name='email' value={formData.email} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='email' placeholder='Email Address' required></input>
+        <input onChange={handleInputChange} name='street' value={formData.street} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='Street' required></input>
         <div className='flex gap-3'>
-          <input className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='City'></input>
-          <input className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='State'></input>
+          <input onChange={handleInputChange} name='city' value={formData.city}   className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='City' required></input>
+          <input onChange={handleInputChange} name='state' value={formData.state} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='State' required></input>
         </div>
         <div className='flex gap-3'>
-          <input className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='number' placeholder='Zip Code'></input>
-          <input className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='Country'></input>
+          <input onChange={handleInputChange} name='zip' value={formData.zip} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='number' placeholder='Zip Code' required></input>
+          <input onChange={handleInputChange} name='country' value={formData.country} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='Country' required></input>
         </div>
-        <input className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='number' placeholder='Phone'></input>
+        <input onChange={handleInputChange} name='phone' value={formData.phone} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='number' placeholder='Phone' required></input>
       </div>
       {/*---------right side ----*/}
       <div className='mt-8'>
@@ -51,11 +126,11 @@ const PlaceOrder = () => {
             </div>
           </div>
           <div className='w-full text-end mt-8'>
-            <button onClick={()=>navigate('/orders')} className='bg-black text-white px-16 py-3 text-sm'>PLACE ORDER</button>
+            <button type='submit' className='bg-black text-white px-16 py-3 text-sm'>PLACE ORDER</button>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   )
 }
 export default PlaceOrder

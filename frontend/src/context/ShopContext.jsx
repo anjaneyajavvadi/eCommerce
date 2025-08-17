@@ -60,13 +60,13 @@ const ShopContextProvider=(props)=>{
 
         if(token) {
             try {
-                console.log('Sending to backend:', { itemId, size }); // Add this
+                
                 
                 const response = await axios.post(`${backendUrl}/api/cart/add`, {itemId, size},{
                 headers: { Authorization: `Bearer ${token}` }
                 });
                 
-                console.log('Backend response:', response.data); // Add this
+            
                 
                 if(!response.data.success) {
                     toast.error(response.data.message);
@@ -172,7 +172,7 @@ const ShopContextProvider=(props)=>{
                     const response=await axios.get(`${backendUrl}/api/cart/list`,{
                         headers:{Authorization:`Bearer ${token}`}
                     });
-                    console.log(response.data.cart);
+        
                     if(response.data.success){
                         setCartItems(response.data.cart);
                     }
@@ -206,6 +206,7 @@ const ShopContextProvider=(props)=>{
         addToCart,
         getCartCount,
         cartItems,
+        setCartItems,
         updateQuantity,
         getCartAmount,
         navigate,

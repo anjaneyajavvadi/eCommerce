@@ -8,3 +8,6 @@ const orderSchema=new mongoose.Schema({
     status:{type:String,required:true,default:"Order Placed"},
     date:{type:Number,required:true}
 });
+
+const orderModel=mongoose.models.order || mongoose.model("order",orderSchema);
+export default orderModel;

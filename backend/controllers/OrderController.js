@@ -1,4 +1,5 @@
 import orderModel from "../models/orderModel.js";
+import userModel from "../models/userModel.js";
 
 const placeOrder=async(req,res)=>{
     try{
@@ -19,14 +20,14 @@ const placeOrder=async(req,res)=>{
 
         const newOrder=new orderModel(orderData);
         await newOrder.save();
-        res.json({success:true,message:"Order Placed Successfully"});
+        
         await userModel.findByIdAndUpdate(userId,{cartData:{}});
+
+        res.json({success:true,message:"Order Placed Successfully"});
     }catch(err){
         console.log(err);
         res.json({success:false, message:"Internal Server Error"});
     }
-
-
 }
 
 const placeOrderStripe=async(req,res)=>{
@@ -43,7 +44,14 @@ const allOrders=async(req,res)=>{
 }
 
 const userOrders=async(req,res)=>{
-    
+    try{
+        const userId=req.body.userId;
+        const orders=await orderModel.find({userId:userId});
+        res.json({success:true,orders});
+    }catch(err){
+        console.log(err);
+        res.json({success:false, message:"Internal Server Error"});
+    }
 }
 const updateOrderStatus=async(req,res)=>{
 
