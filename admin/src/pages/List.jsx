@@ -1,43 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { backendUrl } from '../App';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { currency } from '../App';
+import { useContext } from 'react';
+import { AdminContext } from '../context/AdminContext';
 const List = ({token}) => {
-    const [list, setList] = useState([]);
-
-    const fetchList=async()=>{
-        try{
-            const response=await axios.get(backendUrl+"/api/product/list",{headers:{token}});
-            if(response.data.success){
-                setList(response.data.products);
-            }
-            else{
-                toast.error(response.data.message);
-            }
-        }
-        catch(err){
-            console.log(err);
-            toast.error(err.response.data.message);
-        }
-    }
-
-    const removeProduct=async(id)=>{
-        try{
-            const response=await axios.delete(backendUrl+"/api/product/remove/"+id,{headers:{token}}); 
-            if(response.data.success){
-                toast.success(response.data.message);
-                await fetchList();
-            }
-            else{
-                toast.error(response.data.message);
-            }
-        }
-        catch(err){
-            console.log(err);
-            toast.error(err.response.data.message);
-        }
-    }
+    
+    const {currency,removeProduct,fetchList,list}=useContext(AdminContext);
 
     useEffect(()=>{
         fetchList();

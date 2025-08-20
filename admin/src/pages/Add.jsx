@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import axios from 'axios';
-import { backendUrl } from '../App';
 import { toast } from 'react-toastify';
+import { useContext } from 'react';
+import { AdminContext } from '../context/AdminContext';
 
 const Add = ({token}) => {
     const [image1,setImage1]=useState(false);
@@ -17,6 +18,8 @@ const Add = ({token}) => {
     const [subCategory, setSubCategory] = useState("Topwear");
     const [sizes, setSizes] = useState([]);
     const [bestSeller, setBestSeller] = useState(false);
+
+    const {backendUrl}=useContext(AdminContext);
 
     const onSubmitHandler=async(event)=>{
         event.preventDefault();

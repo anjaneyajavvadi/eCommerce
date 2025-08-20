@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { backendUrl } from '../App';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useContext } from 'react';
+import { AdminContext } from '../context/AdminContext';
 
 const Login = ({setToken}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const {backendUrl}=useContext(AdminContext);
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     try {

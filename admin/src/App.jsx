@@ -6,17 +6,20 @@ import Add from './pages/Add';
 import List from './pages/List';
 import Orders from './pages/Orders';
 import Login from './components/Login';
-export const backendUrl = import.meta.env.VITE_BACKEND_URL;
-export const currency="₹";
+
 import { ToastContainer, toast } from 'react-toastify';
+import { useContext } from 'react';
+import { AdminContext } from './context/AdminContext';
 
 const App = () => {
+  const {token,setToken}=useContext(AdminContext);
 
-  const [token,setToken]=useState(localStorage.getItem("token")?localStorage.getItem("token"):"");
 
   useEffect(() => {
     localStorage.setItem("token",token);
   },[token]);
+
+
   return (
     <div className='bg-gray50 min-h-screen'>
       <ToastContainer position='top-center'/> 

@@ -60,7 +60,15 @@ const placeOrderRazorpay=async(req,res)=>{
 
 //for admin panel
 const allOrders=async(req,res)=>{
-
+    try{
+      
+      const orders=await orderModel.find({});
+      console.log(orders);
+      res.json({success:true,orders});
+    }catch(err){
+      console.log(err);
+      res.json({success:false, message:"Internal Server Error"});
+    }
 }
 
 const userOrders=async(req,res)=>{
