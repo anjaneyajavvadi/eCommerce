@@ -6,9 +6,10 @@ import { ShopContext } from '../context/ShopContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+
 const PlaceOrder = () => {
   const [method,setMethod]=useState('cod');
-  const {navigate,backendUrl,token,cartItems,setCartItems,getCartAmount,delivery_fee,products}=useContext(ShopContext);
+  const {navigate,backendUrl,token,cartItems,setCartItems,getCartAmount,delivery_fee,products,setOrderInProgress}=useContext(ShopContext);
 
   const [formData,setFormData]=useState({
     firstName: '',
@@ -25,6 +26,7 @@ const PlaceOrder = () => {
   const onSubmitHandler = async (e) => {
   e.preventDefault();
   try {
+    setOrderInProgress(true);
     let items = [];
 
     // Build items array
@@ -52,6 +54,8 @@ const PlaceOrder = () => {
 
     switch (method) {
       case "cod":
+        orderData.paymentMethod="cod";
+        orderData.payment = false;
         const response = await axios.post(
           `${backendUrl}/api/order/placeorder`,
           orderData,
@@ -68,6 +72,14 @@ const PlaceOrder = () => {
         break;
 
       case "stripe":
+        const responseStripe=await axios.post(`${backendUrl}/api/order/placeorder-stripe`,orderData,{headers:{Authorization:`Bearer ${token}`}});
+        if(responseStripe.data.success){
+          const {sessionUrl}=responseStripe.data;
+          window.location.replace(sessionUrl);
+        }
+        else{
+          toast.error(responseStripe.data.message);
+        }
         break;
 
       default:
@@ -76,6 +88,9 @@ const PlaceOrder = () => {
   } catch (err) {
     console.error(err);
     toast.error("Something went wrong while placing order");
+  }
+  finally{
+    setOrderInProgress(false);
   }
 };
 

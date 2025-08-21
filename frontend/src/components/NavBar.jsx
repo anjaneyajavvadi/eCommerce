@@ -2,9 +2,11 @@ import { Link, NavLink } from 'react-router-dom';
 import {assets} from '../assets/assets'
 import { useContext, useState } from 'react';
 import { ShopContext } from '../context/ShopContext';
+import { ThemeContext } from '../context/ThemeContext';
 const NavBar = () => {
     const [visible,setVisible] = useState(false);
     const {setShowSearch,getCartCount,navigate,token,setToken,location}=useContext(ShopContext);
+    const {theme,toggleTheme}=useContext(ThemeContext);
     
   return (
     <div className="flex items-center justify-between py-5 font-medium">
@@ -40,6 +42,7 @@ const NavBar = () => {
                     <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500'>
                         <p onClick={() => navigate('/profile')} className='cursor-pointer hover:text-black'>My Profile</p>
                         <p onClick={() => navigate('/orders')} className='cursor-pointer hover:text-black'>Orders</p>
+                        <p onClick={() => toggleTheme()} className='cursor-pointer hover:text-black'>DarkMode</p>
                         <p
                         onClick={() => {
                             localStorage.removeItem("token");

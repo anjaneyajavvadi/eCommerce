@@ -14,6 +14,9 @@ const ShopContextProvider=(props)=>{
     const [search,setSearch]=useState('');
     const [products,setProducts]=useState([]);
     const [showSearch,setShowSearch]=useState(false); 
+    // In ShopContext.js
+    const [orderInProgress, setOrderInProgress] = useState(false);
+
 
     const [cartItems,setCartItems]=useState({});
     const [token,setToken]=useState(localStorage.getItem("token")?localStorage.getItem("token"):"");
