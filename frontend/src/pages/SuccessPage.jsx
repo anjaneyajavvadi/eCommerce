@@ -8,7 +8,7 @@ const SuccessPage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate("/orders");
-    }, 300000); // redirect after 3s
+    }, 3000); // redirect after 3s
     return () => clearTimeout(timer);
   }, [navigate]);
 

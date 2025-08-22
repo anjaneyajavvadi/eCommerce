@@ -18,9 +18,9 @@ const PlaceOrder = () => {
     street: '',
     city: '',
     state: '',
-    zip: '',
+    zipCode: '',
     country: '',
-    phone: '',
+    phoneNumber: '',
   });
 
   const onSubmitHandler = async (e) => {
@@ -73,9 +73,12 @@ const PlaceOrder = () => {
 
       case "stripe":
         const responseStripe=await axios.post(`${backendUrl}/api/order/placeorder-stripe`,orderData,{headers:{Authorization:`Bearer ${token}`}});
+        console.log(responseStripe.data); // add this
         if(responseStripe.data.success){
           const {sessionUrl}=responseStripe.data;
           window.location.replace(sessionUrl);
+          toast.success(responseStripe.data.message);
+          console.log(sessionUrl);
         }
         else{
           toast.error(responseStripe.data.message);
@@ -121,10 +124,10 @@ const PlaceOrder = () => {
           <input onChange={handleInputChange} name='state' value={formData.state} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='State' required></input>
         </div>
         <div className='flex gap-3'>
-          <input onChange={handleInputChange} name='zip' value={formData.zip} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='number' placeholder='Zip Code' required></input>
+          <input onChange={handleInputChange} name='zipCode' value={formData.zipCode} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='number' placeholder='Zip Code' required></input>
           <input onChange={handleInputChange} name='country' value={formData.country} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='text' placeholder='Country' required></input>
         </div>
-        <input onChange={handleInputChange} name='phone' value={formData.phone} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='number' placeholder='Phone' required></input>
+        <input onChange={handleInputChange} name='phoneNumber' value={formData.phoneNumber} className='border border-gray-300 rounded py1.5 px-3.5 w-full' type='number' placeholder='Phone' required></input>
       </div>
       {/*---------right side ----*/}
       <div className='mt-8'>

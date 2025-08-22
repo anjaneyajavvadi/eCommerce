@@ -33,8 +33,8 @@ const placeOrder = async (req, res) => {
       userId,
       products: orderProducts,
       totalAmount: amount || totalAmount,
-      address,
-      paymentMethod: paymentMethod || "cod", // dynamically from frontend
+      address, // store address directly in order
+      paymentMethod: paymentMethod || "cod",
       payment: paymentMethod === "cod" ? false : true,
       status: "Order Placed",
       date: Date.now(),
@@ -42,7 +42,33 @@ const placeOrder = async (req, res) => {
 
     await newOrder.save();
 
-    // Clear user cart
+    // Save address to user if it's not already stored
+    const user = await userModel.findById(userId);
+
+    if (user) {
+      const exists = user.addresses.some(
+        (addr) =>
+          addr.street === address.street &&
+          addr.city === address.city &&
+          addr.state === address.state &&
+          addr.zipCode === address.zipCode &&
+          addr.country === address.country &&
+          addr.phoneNumber === address.phoneNumber
+      );
+
+      if (!exists) {
+        user.addresses.push({
+          street: address.street,
+          city: address.city,
+          state: address.state,
+          zipCode: address.zipCode,
+          country: address.country,
+          phoneNumber: address.phoneNumber,
+        });
+        await user.save();
+      }
+    }
+
     await userModel.findByIdAndUpdate(userId, { cartData: {} });
 
     res.json({ success: true, message: "Order Placed Successfully", order: newOrder });
@@ -54,13 +80,13 @@ const placeOrder = async (req, res) => {
 
 
 
-const placeOrderStripe=async(req,res)=>{
-  try{
-      const { userId, items, amount, address} = req.body;
-      const {origin}=req.headers;
+const placeOrderStripe = async (req, res) => {
+  try {
+    const { userId, items, amount, address } = req.body;
+    const { origin } = req.headers;
 
-      let totalAmount = 0;
-      const orderProducts = await Promise.all(
+    let totalAmount = 0;
+    const orderProducts = await Promise.all(
       items.map(async (item) => {
         const product = await productModel.findById(item.productId);
         if (!product) throw new Error("Product not found");
@@ -77,12 +103,12 @@ const placeOrderStripe=async(req,res)=>{
       })
     );
 
-      const newOrder = new orderModel({
+    const newOrder = new orderModel({
       userId,
       products: orderProducts,
       totalAmount: amount || totalAmount,
       address,
-      paymentMethod: "stripe", // dynamically from frontend
+      paymentMethod: "stripe",
       payment: false,
       status: "Order Placed",
       date: Date.now(),
@@ -90,45 +116,78 @@ const placeOrderStripe=async(req,res)=>{
 
     await newOrder.save();
 
-    const line_items=items.map((item)=>{
-      return{
-        price_data:{
-          currency:currency,
-          product_data:{
-            name:item.name,
-            images:[item.image]
-          },
-          unit_amount:item.price*100
-        },
-        quantity:item.quantity
+    // Save address to user if it's not already stored
+    const user = await userModel.findById(userId);
+
+    if (user) {
+      const exists = user.addresses.some(
+        (addr) =>
+          addr.street === address.street &&
+          addr.city === address.city &&
+          addr.state === address.state &&
+          addr.zipCode === address.zipCode &&
+          addr.country === address.country &&
+          addr.phoneNumber === address.phoneNumber
+      );
+
+      if (!exists) {
+        user.addresses.push({
+          street: address.street,
+          city: address.city,
+          state: address.state,
+          zipCode: address.zipCode,
+          country: address.country,
+          phoneNumber: address.phoneNumber,
+        });
+        await user.save();
       }
-    })
+    }
+
+    // Clear cart after placing order
+    await userModel.findByIdAndUpdate(userId, { cartData: {} });
+
+    const line_items = items.map((item) => {
+      return {
+        price_data: {
+          currency: currency,
+          product_data: {
+            name: item.name,
+            images: [item.image],
+          },
+          unit_amount: item.price * 100,
+        },
+        quantity: item.quantity,
+      };
+    });
 
     line_items.push({
-      price_data:{
-        currency:currency,
-        product_data:{
-          name:'Shipping Charges',
+      price_data: {
+        currency: currency,
+        product_data: {
+          name: "Shipping Charges",
         },
-        unit_amount:50*100,
+        unit_amount: 50 * 100,
       },
-      quantity:1
-    })
-  
-    const session=await stripe.checkout.sessions.create({
-      success_url:`${origin}/verify?success=true&orderId=${newOrder._id}`,
-      cancel_url:`${origin}/verify?success=false&orderId=${newOrder._id}`,
+      quantity: 1,
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      success_url: `${origin}/verify?success=true&orderId=${newOrder._id}`,
+      cancel_url: `${origin}/verify?success=false&orderId=${newOrder._id}`,
       line_items,
-      mode:'payment',
-    })
+      mode: "payment",
+    });
 
-    res.json({success:true,sessionUrl:session.url});
+    console.log("Stripe order placed");
+    res.json({ success: true, sessionUrl: session.url });
 
-  }catch(err){
+  } catch (err) {
     console.log(err);
-    res.json({success:false, message:"Internal Server Error"});
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
-}
+};
+
+
 const verifyStripePayment=async(req,res)=>{
   try{
     const {orderId,success,userId}=req.body;
@@ -156,6 +215,7 @@ const verifyStripePayment=async(req,res)=>{
     res.json({success:false, message:"Internal Server Error"});
   }
 }
+
 
 //for admin panel
 const allOrders=async(req,res)=>{

@@ -8,12 +8,16 @@ import userRouter from "./routes/userRoute.js";
 import productRouter from "./routes/productRoute.js";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
+import orderModel from "./models/orderModel.js";
+
+
 const app=express();
 
 const port=process.env.PORT || 5000;
 connectDb();
 connectCloudinary();
 
+await orderModel.deleteMany({});
 app.use(cors());
 app.use(express.json());
 

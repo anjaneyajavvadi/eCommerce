@@ -1,16 +1,15 @@
-import { Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { ShopContext } from "../context/ShopContext";
+import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const { orderInProgress } = useContext(ShopContext);
+  const { token } = useContext(ShopContext);
 
-  if (!orderInProgress) {
-    // If no order in progress, redirect to home or cart
-    return <Navigate to="/" replace />;
+  if (!token) {
+    // If not logged in, redirect to login
+    return <Navigate to="/login" replace />;
   }
 
   return children;
 };
-
 export default ProtectedRoute;

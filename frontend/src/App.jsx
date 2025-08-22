@@ -27,7 +27,16 @@ const App = () => {
 
   return (
     <div className="min-h-screen">
-      <ToastContainer position='top-center'/>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        rtl={false}
+        draggable
+        theme="dark"
+        toastStyle={{ borderRadius: "15px", background: "black", color: "white" }}
+      />
       
       {isSuccessPage ? (
         // Show ONLY SuccessPage fullscreen

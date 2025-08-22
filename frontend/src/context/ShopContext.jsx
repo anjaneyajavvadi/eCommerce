@@ -217,7 +217,8 @@ const ShopContextProvider=(props)=>{
         token,
         setToken,
         location,
-        removeFromCart
+        removeFromCart,
+        setOrderInProgress
     }
     return (
         <ShopContext.Provider value={value}>
