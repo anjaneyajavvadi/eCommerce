@@ -192,4 +192,6 @@ const updateOrderStatus=async(req,res)=>{
     res.json({success:false, message:"Internal Server Error"});
   }
 }
+
 export {placeOrder,placeOrderStripe,verifyStripePayment,allOrders,userOrders,updateOrderStatus}
+
