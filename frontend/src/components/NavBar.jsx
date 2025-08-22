@@ -2,11 +2,10 @@ import { Link, NavLink } from 'react-router-dom';
 import {assets} from '../assets/assets'
 import { useContext, useState } from 'react';
 import { ShopContext } from '../context/ShopContext';
-import { ThemeContext } from '../context/ThemeContext';
+
 const NavBar = () => {
     const [visible,setVisible] = useState(false);
     const {setShowSearch,getCartCount,navigate,token,setToken,location}=useContext(ShopContext);
-    const {theme,toggleTheme}=useContext(ThemeContext);
     
   return (
     <div className="flex items-center justify-between py-5 font-medium">

@@ -76,10 +76,10 @@ const Orders = () => {
                     <span className="w-2 h-2 rounded-full bg-green-500"></span>
                     <p className="text-sm md:text-base">{order.status || "Ready to ship"}</p>
                   </div>
-                  <div className="flex justify-center mt-6">
+                  <div className="flex flex-row justify-end mt-6">
                   <button
                     onClick={() => { loadOrders() }}
-                    className="border px-10 py-2 text-sm bg-black text-white font-medium rounded-sm hover:bg-gray-100 hover:text-black hover:transition"
+                    className="flex flex-row justify-end border px-10 py-2 text-sm bg-black text-white font-medium rounded-sm hover:bg-gray-100 hover:text-black hover:transition"
                   >
                     Track Order
                   </button>

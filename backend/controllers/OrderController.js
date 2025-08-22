@@ -156,9 +156,6 @@ const verifyStripePayment=async(req,res)=>{
     res.json({success:false, message:"Internal Server Error"});
   }
 }
-const placeOrderRazorpay=async(req,res)=>{
-
-}
 
 //for admin panel
 const allOrders=async(req,res)=>{
@@ -195,4 +192,4 @@ const updateOrderStatus=async(req,res)=>{
     res.json({success:false, message:"Internal Server Error"});
   }
 }
-export {placeOrder,placeOrderStripe,verifyStripePayment,placeOrderRazorpay,allOrders,userOrders,updateOrderStatus}
+export {placeOrder,placeOrderStripe,verifyStripePayment,allOrders,userOrders,updateOrderStatus}

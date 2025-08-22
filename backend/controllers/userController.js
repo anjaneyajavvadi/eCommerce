@@ -77,4 +77,17 @@ const getProfile=async(req,res)=>{
     }
 }
 
-export {loginUser,registerUser,adminLogin,getProfile};
+const setProfile=async(req,res)=>{
+    try{
+        const {name}=req.body;
+        const user=await userModel.findById(req.body.userId);
+        user.name=name;
+        await user.save();
+        res.json({success:true,user});
+    }catch(err){
+        console.log(err);
+        res.json({success:false, message:"Internal Server Error"});
+    }
+}
+
+export {loginUser,registerUser,adminLogin,getProfile,setProfile};
