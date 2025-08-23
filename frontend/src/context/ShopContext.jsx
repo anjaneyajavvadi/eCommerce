@@ -17,12 +17,45 @@ const ShopContextProvider=(props)=>{
     // In ShopContext.js
     const [orderInProgress, setOrderInProgress] = useState(false);
 
-
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: '',
+        phoneNumber: '',
+      });
+    const [addresses,setAddresses]=useState([]);
     const [cartItems,setCartItems]=useState({});
     const [token,setToken]=useState(localStorage.getItem("token")?localStorage.getItem("token"):"");
     const navigate=useNavigate();
     const location=useLocation();
 
+    const [profileData, setProfileData] = useState({});
+    const getProfile = async () => {
+      try {
+        const response = await axios.get(`${backendUrl}/api/user/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        if (response.data.success) {
+          setProfileData(response.data.user);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+  
+    
+  
+    useEffect(() => {
+      getProfile();
+    }, []);
     const getCartAmount=()=>{
         let totalAmount=0;
 
@@ -190,6 +223,30 @@ const ShopContextProvider=(props)=>{
             }
         }
 
+        const fetchAddresses=async(token)=>{
+            if(token){
+                try{
+                    const response=await axios.get(`${backendUrl}/api/address/getUserAddressess`,{
+                        headers:{Authorization:`Bearer ${token}`}
+                    });
+        
+                    if(response.data.success){
+                        setAddresses(response.data.addresses);
+                    }
+                    else{
+                        toast.error(response.data.message);
+                    }
+                }
+                catch(err){
+                    console.log(err);
+                    toast.error(err.response.data.message);
+                }
+            }
+        }
+        useEffect(()=>{
+            fetchAddresses(token);
+        },[token]);
+
         useEffect(()=>{
             loadCartData(token);
         },[token]);
@@ -218,7 +275,13 @@ const ShopContextProvider=(props)=>{
         setToken,
         location,
         removeFromCart,
-        setOrderInProgress
+        setOrderInProgress,
+        orderInProgress,
+        addresses,
+        setAddresses,
+        fetchAddresses,
+        formData,
+        setFormData,profileData,setProfileData
     }
     return (
         <ShopContext.Provider value={value}>

@@ -18,27 +18,29 @@ const Verify = () => {
 
       const response = await axios.post(
         backendUrl + "/api/order/verifyStripePayment",
-        { success, orderId },
+        { success: success === "true", orderId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      console.log(response.data);
 
       if (response.data.success) {
         setCartItems({});
-        navigate("/success");
-        } else {
+        navigate("/success"); // Payment succeeded
+      } else {
         navigate("/cart");
-        }
+        console.log(response.data.message); // Payment canceled or failed
+      }
 
     } catch (error) {
       console.log(error);
     }
   };
 
+
   useEffect(() => {
-    if (success === "true") {
-      verifyPayment();
-    }
-  }, [success, token]);
+  if (orderId) verifyPayment();
+}, [success, orderId, token]);
+
 
   if (!showSuccess) return <div></div>;
 
